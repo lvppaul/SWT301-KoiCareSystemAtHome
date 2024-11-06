@@ -50,7 +50,7 @@ namespace ApiService.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetUserIdByEmail/{email}")]
+        [HttpGet("GetUserIdByEmail")]
         public async Task<IActionResult> GetUserIdByEmailAsync(string email)
         {
             var result = await _accountRepository.GetUserIdByEmailAsync(email);
