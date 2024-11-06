@@ -1,8 +1,10 @@
 ﻿using Domain.Authentication;
 using Domain.Base;
+using Domain.Helper;
 using Domain.Models.Dto.Request;
 using Domain.Models.Dto.Response;
 using Google.Apis.Auth.OAuth2.Requests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -50,14 +52,7 @@ namespace ApiService.Controllers
             return Ok(result);
         }
         //****************************************************
-        [HttpGet("GetUserIdByEmail")]
-        public async Task<IActionResult> GetUserIdByEmailAsync(string email)
-        {
-            var result = await _accountRepository.GetUserIdByEmailAsync(email);
-            if (!(result.Length > 29)) return BadRequest(result);
-            return Ok(result);
-        }
-        [HttpGet("GetAccountByUserId/{id}")]
+        [HttpGet("GetAccountByUserId")]
         public async Task<IActionResult> GetAccountByUserIdAsync(string id)
         {
             var result = await _accountRepository.GetAccountByUserIdAsync(id);
@@ -85,7 +80,7 @@ namespace ApiService.Controllers
             return Ok(result);
         }
 
-        //****************************************************
+    
 
         [HttpPost("CreateShopAccount")]
 
@@ -161,11 +156,12 @@ namespace ApiService.Controllers
 
         //****************************************************
         [HttpPut("ChangeToVipAccount")]
-        public async Task<IActionResult> ChangeRoleToVipAsync(string id)
+        [Authorize(Roles = AppRole.Member)]
+        public async Task<IActionResult> ChangeRoleToVipAsync(string userId)
         {
-            var result = await _accountRepository.ChangeRoleToVipAsync(id);
+            var result = await _accountRepository.ChangeRoleToVipAsync(userId);
             if (!result.Equals(Success)) return BadRequest(result);
-            return Created(string.Empty, result);
+            return Ok(result);
         }
 
         [HttpPut("LockoutEnable/{id}")]
