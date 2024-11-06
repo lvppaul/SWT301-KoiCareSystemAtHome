@@ -34,6 +34,5 @@ namespace Domain.Models.Dto.Request
         [JsonIgnore]
         public int TotalPrice { get; set; }
 
-        public bool isVipUpgrade { get; set; } = false;
     }
 }

@@ -50,12 +50,12 @@ namespace ApiService.Controllers
             return Ok(result);
         }
         //****************************************************
-        [HttpGet("GetUserIdByEmail/{email}")]
+        [HttpGet("GetUserIdByEmail")]
         public async Task<IActionResult> GetUserIdByEmailAsync(string email)
         {
             var result = await _accountRepository.GetUserIdByEmailAsync(email);
             if (!(result.Length > 29)) return BadRequest(result);
-            return Created(string.Empty, result);
+            return Ok(result);
         }
         [HttpGet("GetAccountByUserId/{id}")]
         public async Task<IActionResult> GetAccountByUserIdAsync(string id)
@@ -160,7 +160,7 @@ namespace ApiService.Controllers
 
 
         //****************************************************
-        [HttpPut("ChangeToVipAccount{id}")]
+        [HttpPut("ChangeToVipAccount")]
         public async Task<IActionResult> ChangeRoleToVipAsync(string id)
         {
             var result = await _accountRepository.ChangeRoleToVipAsync(id);
