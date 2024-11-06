@@ -1,8 +1,10 @@
 ﻿using Domain.Authentication;
 using Domain.Base;
+using Domain.Helper;
 using Domain.Models.Dto.Request;
 using Domain.Models.Dto.Response;
 using Google.Apis.Auth.OAuth2.Requests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -24,13 +26,13 @@ namespace ApiService.Controllers
         {
             _accountRepository = accountRepository;
         }
-
+        //****************************************************
         [HttpPost("SignIn")]
         public async Task<IActionResult> SignIn(SignInModel model)
         {
             var result = await _accountRepository.SignInAsync(model);
             if (!result.Message.IsNullOrEmpty()) return BadRequest(result);
-            return Ok(result);
+            return Created(string.Empty, result);
         }
 
         [HttpPost]
@@ -49,15 +51,8 @@ namespace ApiService.Controllers
             if (!(result.Message.IsNullOrEmpty())) return BadRequest(result);
             return Ok(result);
         }
-
-        [HttpGet("GetUserIdByEmail")]
-        public async Task<IActionResult> GetUserIdByEmailAsync(string email)
-        {
-            var result = await _accountRepository.GetUserIdByEmailAsync(email);
-            if (!(result.Length > 29)) return BadRequest(result);
-            return Ok(result);
-        }
-        [HttpGet("GetAccountByUserId/{id}")]
+        //****************************************************
+        [HttpGet("GetAccountByUserId")]
         public async Task<IActionResult> GetAccountByUserIdAsync(string id)
         {
             var result = await _accountRepository.GetAccountByUserIdAsync(id);
@@ -65,13 +60,17 @@ namespace ApiService.Controllers
             return Ok(result);
         }
 
+        //****************************************************
+
         [HttpPost("CreateMemberAccount")]
         public async Task<IActionResult> SignUp(SignUpModel model)
         {
             var result = await _accountRepository.SignUpAsync(model);
             if (!result.Message.IsNullOrEmpty()) return BadRequest(result);
-            return Ok(result);
+            return Created(string.Empty, result);
         }
+
+        
 
         [HttpPost("CreateVipAccount")]
         public async Task<IActionResult> SignUpVip(SignUpModel model)
@@ -81,12 +80,15 @@ namespace ApiService.Controllers
             return Ok(result);
         }
 
+    
+
         [HttpPost("CreateShopAccount")]
+
         public async Task<IActionResult> SignUpShop(SignUpModel model)
         {
             var result = await _accountRepository.CreateShopAccount(model);
             if (!result.Message.IsNullOrEmpty()) return BadRequest(result);
-            return Ok(result);
+            return Created(string.Empty, result);
         }
 
         [HttpPost("CreateAdminAccount")]
@@ -97,6 +99,9 @@ namespace ApiService.Controllers
             return Ok(result);
         }
 
+        //****************************************************
+
+
         [HttpPost("ConfirmEmail")]
         public async Task<IActionResult> ConfirmEmail(ConfirmEmailRequest model)
         {
@@ -105,8 +110,10 @@ namespace ApiService.Controllers
             {
                 return BadRequest(result);
             }
-            return Ok(result);
+            return Created(string.Empty, result);
         }
+
+       
 
         [HttpGet("RequestResetPassword/{email}")]
         public async Task<IActionResult> RequestResetPassword(string email)
@@ -144,12 +151,15 @@ namespace ApiService.Controllers
             var result = await _accountRepository.UpdateAccountDetailAsync(id,model);
             if (!result.Equals(Success)) return BadRequest(result);
             return Ok(result);
-        }       
+        }
 
-        [HttpPut("ChangeToVipAccount{id}")]
-        public async Task<IActionResult> ChangeRoleToVipAsync(string id)
+
+        //****************************************************
+        [HttpPut("ChangeToVipAccount")]
+        [Authorize(Roles = AppRole.Member)]
+        public async Task<IActionResult> ChangeRoleToVipAsync(string userId)
         {
-            var result = await _accountRepository.ChangeRoleToVipAsync(id);
+            var result = await _accountRepository.ChangeRoleToVipAsync(userId);
             if (!result.Equals(Success)) return BadRequest(result);
             return Ok(result);
         }
