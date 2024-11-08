@@ -51,6 +51,16 @@ namespace ApiService.Controllers
             if (!(result.Message.IsNullOrEmpty())) return BadRequest(result);
             return Ok(result);
         }
+
+        //****************************************************
+        [HttpGet("GetUserIdByEmail")]
+        public async Task<IActionResult> GetUserIdByEmailAsync(string email)
+        {
+            var result = await _accountRepository.GetUserIdByEmailAsync(email);
+            if (!(result.Length > 29)) return BadRequest(result);
+            return Ok(result);
+        }
+
         //****************************************************
         [HttpGet("GetAccountByUserId")]
         public async Task<IActionResult> GetAccountByUserIdAsync(string id)
